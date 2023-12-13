@@ -6,6 +6,7 @@
 #include<errno.h>
 #include <unistd.h>
 #include <stddef.h>
+#include <string.h>
 
 #define BUF_SIZE 1024
 #define MAX_CLIENT 5
@@ -19,6 +20,8 @@ int main(void)
     struct sockaddr_in addr;
     char buffer[BUF_SIZE];
     int bytes_read;
+    const char REG[] = "re";
+    const char LOG[] = "log";
 
     //prepear address
     addr.sin_family = AF_INET;
@@ -38,7 +41,7 @@ int main(void)
     //listen our socket
     listen(listener,1);
 
-
+    printf("Server started\n");
     while(1)
     {
         //wait accept estabilish
@@ -55,12 +58,19 @@ int main(void)
             //getting message
             bytes_read = recv(sockfd, buffer, BUF_SIZE, 0);
             if(bytes_read <= 0) {break;}
+            if(strcmp(buffer, REG) == 0)
+            {
+                printf("ok Registration\n");
+            }
+            else
+            {
+                printf("unknow request\n");
+            }
+
             //send back message
-            send(sockfd, buffer, bytes_read, 0);
+            //send(sockfd, buffer, bytes_read, 0);
         }
     }
-
-    printf("end\n");
     close(listener);
     close(sockfd);
 
